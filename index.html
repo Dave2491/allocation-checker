@@ -4,124 +4,32 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Union Tester Allocation</title>
-  <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap');
+ <style>
+  /* ...existing styles... */
 
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
+  /* Responsive tweaks */
+  @media (max-width: 480px) {
     body {
-      font-family: 'Inter', sans-serif;
-      background-color: #0a0f18;
-      color: #dce3ea;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 100vh;
-      padding: 20px;
-    }
-
-    .container {
-      background: #111820;
-      padding: 32px;
-      border-radius: 12px;
-      width: 100%;
-      max-width: 420px;
-      border: 1px solid #1c2935;
-    }
-
-    .logo {
-      width: 40px;
-      margin: 0 auto 12px;
-      display: block;
-    }
-
-    h1 {
-      text-align: center;
-      font-size: 1.5rem;
-      color: #c4d2e2;
-      margin-bottom: 8px;
-    }
-
-    .disclaimer {
-      font-size: 0.85rem;
-      text-align: center;
-      color: #8899aa;
-      margin-bottom: 28px;
-    }
-
-    label {
-      display: block;
-      font-weight: 600;
-      font-size: 0.85rem;
-      margin-bottom: 6px;
-      color: #a8b8c8;
-    }
-
-    input, select {
-      width: 100%;
-      padding: 10px;
-      margin-bottom: 18px;
-      border-radius: 8px;
-      border: 1px solid #1c2935;
-      background-color: #0f141b;
-      color: #dce3ea;
-      font-size: 1rem;
-    }
-
-    input::placeholder {
-      color: #697988;
-    }
-
-    select {
-      appearance: none;
-    }
-
-    button {
-      width: 100%;
       padding: 12px;
-      background-color: #2075f4;
-      color: white;
-      font-weight: 600;
-      font-size: 1rem;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      margin-top: 4px;
-      transition: background-color 0.2s ease;
     }
-
-    button:hover {
-      background-color: #1c64d1;
+    .container {
+      padding: 24px 20px;
+      max-width: 100%;
+      border-radius: 10px;
     }
-
+    h1 {
+      font-size: 1.3rem;
+    }
+    input, select, button {
+      font-size: 0.9rem;
+      padding: 10px;
+    }
     .result {
-      margin-top: 24px;
-      background-color: #0f141b;
-      border: 1px solid #1c2935;
-      padding: 16px;
-      border-radius: 8px;
-      font-size: 0.95rem;
-      line-height: 1.6;
-      color: #dce3ea;
-      white-space: pre-line;
+      font-size: 0.9rem;
+      padding: 12px;
     }
-
-    footer {
-      text-align: center;
-      margin-top: 40px;
-      font-size: 0.75rem;
-      color: #5c6b7a;
-    }
-
-    footer a {
-      color: #2075f4;
-      text-decoration: none;
-    }
-  </style>
+  }
+</style>
 </head>
 <body>
   <div class="container">
