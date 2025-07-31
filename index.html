@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Union Tester Allocation</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap');
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #0a0f18;
+      color: #dce3ea;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .container {
+      background: #111820;
+      padding: 32px;
+      border-radius: 12px;
+      width: 100%;
+      max-width: 420px;
+      border: 1px solid #1c2935;
+    }
+
+    .logo {
+      width: 40px;
+      margin: 0 auto 12px;
+      display: block;
+    }
+
+    h1 {
+      text-align: center;
+      font-size: 1.5rem;
+      color: #c4d2e2;
+      margin-bottom: 8px;
+    }
+
+    .disclaimer {
+      font-size: 0.85rem;
+      text-align: center;
+      color: #8899aa;
+      margin-bottom: 28px;
+    }
+
+    label {
+      display: block;
+      font-weight: 600;
+      font-size: 0.85rem;
+      margin-bottom: 6px;
+      color: #a8b8c8;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 18px;
+      border-radius: 8px;
+      border: 1px solid #1c2935;
+      background-color: #0f141b;
+      color: #dce3ea;
+      font-size: 1rem;
+    }
+
+    input::placeholder {
+      color: #697988;
+    }
+
+    select {
+      appearance: none;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      background-color: #2075f4;
+      color: white;
+      font-weight: 600;
+      font-size: 1rem;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      margin-top: 4px;
+      transition: background-color 0.2s ease;
+    }
+
+    button:hover {
+      background-color: #1c64d1;
+    }
+
+    .result {
+      margin-top: 24px;
+      background-color: #0f141b;
+      border: 1px solid #1c2935;
+      padding: 16px;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      line-height: 1.6;
+      color: #dce3ea;
+      white-space: pre-line;
+    }
+
+    footer {
+      text-align: center;
+      margin-top: 40px;
+      font-size: 0.75rem;
+      color: #5c6b7a;
+    }
+
+    footer a {
+      color: #2075f4;
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <img class="logo" src="https://avatars.githubusercontent.com/u/129756567?s=200&v=4" alt="Union Logo" />
+    <h1>Union Allocation Checker</h1>
+    <p class="disclaimer">
+      Based on math & logic, not official, just hopium.
+    </p>
+
+    <label for="username">Username</label>
+    <input type="text" id="username" placeholder="e.g. 0xsoje" />
+
+    <label for="xpInput">XP</label>
+    <input type="number" id="xpInput" placeholder="e.g. 850" min="300" />
+
+    <label for="levelSelect">Level</label>
+    <select id="levelSelect">
+      <option value="" disabled selected>Select level</option>
+      <option value="5">Level 5 (300–454 XP)</option>
+      <option value="6">Level 6 (455–629 XP)</option>
+      <option value="7">Level 7 (630–779 XP)</option>
+      <option value="8">Level 8 (780–954 XP)</option>
+      <option value="9">Level 9 (955–1154 XP)</option>
+      <option value="10">Level 10 (1155+ XP)</option>
+    </select>
+
+    <button id="calcBtn">Calculate Allocation</button>
+
+    <div id="result" class="result" style="display: none;"></div>
+
+    <footer>
+      Created by <a href="https://x.com/0xsoje" target="_blank">@0xSoje</a>
+    </footer>
+  </div>
+
+  <script>
+    const LEVEL_POOLS = {
+      5:  { tokenPool: 175000000, totalXP: 23250000, min: 300, max: 454 },
+      6:  { tokenPool: 175000000, totalXP: 45120000, min: 455, max: 629 },
+      7:  { tokenPool: 140000000, totalXP: 9570000, min: 630, max: 779 },
+      8:  { tokenPool: 105000000, totalXP: 3090000, min: 780, max: 954 },
+      9:  { tokenPool: 70000000,  totalXP: 440000, min: 955, max: 1154 },
+      10: { tokenPool: 35000000,  totalXP: 120000, min: 1155, max: Infinity }
+    };
+
+    // FDVs for $U token in USD
+    const FDVs = [200_000_000, 500_000_000, 750_000_000, 1_000_000_000]; 
+    const TOTAL_SUPPLY = 10_000_000_000; // 10 billion tokens
+
+    const calcBtn = document.getElementById('calcBtn');
+    const resultDiv = document.getElementById('result');
+
+    calcBtn.addEventListener('click', () => {
+      const username = document.getElementById('username').value.trim();
+      const xp = parseInt(document.getElementById('xpInput').value);
+      const level = parseInt(document.getElementById('levelSelect').value);
+
+      if (!username || !xp || !level) {
+        resultDiv.style.display = 'block';
+        resultDiv.textContent = 'Please fill in all fields properly.';
+        return;
+      }
+
+      if (xp < 300) {
+        resultDiv.style.display = 'block';
+        resultDiv.textContent = 'XP must be at least 300 to be eligible.';
+        return;
+      }
+
+      const levelData = LEVEL_POOLS[level];
+      if (!levelData || xp < levelData.min || xp > levelData.max) {
+        resultDiv.style.display = 'block';
+        resultDiv.textContent = 'Please enter correct details.';
+        return;
+      }
+
+      const { tokenPool, totalXP } = levelData;
+      const allocation = (xp / totalXP) * tokenPool;
+      const rounded = Math.round(allocation);
+
+      // Calculate estimated rewards in USD for each FDV
+      const estimatedUSD = FDVs.map(fdv => {
+        const pricePerToken = fdv / TOTAL_SUPPLY;
+        return (rounded * pricePerToken).toLocaleString(undefined, { style: 'currency', currency: 'USD', minimumFractionDigits: 2 });
+      });
+
+      resultDiv.innerHTML = `
+        <strong>User:</strong> ${username}<br />
+        <strong>Level:</strong> ${level}<br />
+        <strong>XP:</strong> ${xp}<br />
+        <strong>Estimated Allocation:</strong> ${rounded.toLocaleString()} $U 🎉<br /><br />
+        <strong>Estimated rewards at various FDVs:</strong><br />
+        - $200M FDV: ${estimatedUSD[0]}<br />
+        - $500M FDV: ${estimatedUSD[1]}<br />
+        - $750M FDV: ${estimatedUSD[2]}<br />
+        - $1B FDV: ${estimatedUSD[3]}
+      `;
+      resultDiv.style.display = 'block';
+    });
+  </script>
+</body>
+</html>
